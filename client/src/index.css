@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --color-background: #F5EFE4;
+  --color-card: #FBF7F0;
+  --color-foreground: #2B2622;
+  --color-muted: #5E564D;
+  --color-primary: #2E4A3B;
+  --color-primary-hover: #1F3A2D;
+  --color-primary-foreground: #F5EFE4;
+  --color-accent: #A34A26;
+  --color-accent-hover: #8E3F20;
+  --color-border: #E2D6C1;
+  --color-input-border: #D4C8B2;
+  --color-panel: #243F31;
+  --color-panel-light: #E8B796;
+
+  --color-cat-sage: #CFDCC8;
+  --color-cat-butter: #F1DFA6;
+  --color-cat-blush: #EBC9B5;
+  --color-cat-sand: #E8DCC8;
+}
+
+:root {
+  --background: #F5EFE4;
+  --card: #FBF7F0;
+  --foreground: #2B2622;
+  --muted-foreground: #5E564D;
+  --primary: #2E4A3B;
+  --primary-hover: #1F3A2D;
+  --primary-foreground: #F5EFE4;
+  --accent: #A34A26;
+  --accent-hover: #8E3F20;
+  --border: #E2D6C1;
+  --input: #D4C8B2;
+  --ring: #A34A26;
+  --panel: #243F31;
+  --panel-light: #E8B796;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-serif {
+  font-family: 'Fraunces', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.font-sans {
+  font-family: 'DM Sans', sans-serif;
+}

@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SkillExchangeType {
+  OFFERING // Öğretebileceği yetenek
+  SEEKING  // Öğrenmek istediği yetenek
+}
+
+enum ProficiencyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum SwapStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+  fullName     String
+  bio          String?
+  avatarUrl    String?
+  rating       Float       @default(0.0)
+  totalReviews Int         @default(0)
+  role         String[]    @default(["USER"])
+  permissions  String[]    @default(["skills:read", "skills:create", "skills:delete", "users:read", "users:update", "swaps:read", "swaps:create", "swaps:update"])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  skills               UserSkill[]
+  sentSwapRequests     SwapRequest[] @relation("SentSwaps")
+  receivedSwapRequests SwapRequest[] @relation("ReceivedSwaps")
+  givenReviews         Review[]      @relation("GivenReviews")
+  receivedReviews      Review[]      @relation("ReceivedReviews")
+
+  @@map("users")
+}
+
+model Skill {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  category    String   // örn. "Yazılım", "Dil", "Tasarım", "Müzik"
+  description String?
+  createdAt   DateTime @default(now())
+
+  users UserSkill[]
+
+  offeredInSwaps   SwapRequest[] @relation("OfferedSkill")
+  requestedInSwaps SwapRequest[] @relation("RequestedSkill")
+
+  @@map("skills")
+}
+
+model UserSkill {
+  id               String            @id @default(uuid())
+  userId           String
+  skillId          String
+  type             SkillExchangeType // OFFERING veya SEEKING
+  proficiencyLevel ProficiencyLevel  @default(BEGINNER)
+  yearsExperience  Int?              @default(0)
+  description      String?
+  createdAt        DateTime          @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId, type])
+  @@map("user_skills")
+}
+
+model SwapRequest {
+  id               String     @id @default(uuid())
+  requesterId      String
+  receiverId       String
+  offeredSkillId   String
+  requestedSkillId String
+  status           SwapStatus @default(PENDING)
+  message          String?
+  notes            String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  requester      User    @relation("SentSwaps", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver       User    @relation("ReceivedSwaps", fields: [receiverId], references: [id], onDelete: Cascade)
+  offeredSkill   Skill   @relation("OfferedSkill", fields: [offeredSkillId], references: [id])
+  requestedSkill Skill   @relation("RequestedSkill", fields: [requestedSkillId], references: [id])
+  reviews        Review[]
+
+  @@map("swap_requests")
+}
+
+model Review {
+  id            String   @id @default(uuid())
+  swapRequestId String
+  reviewerId    String
+  revieweeId    String
+  rating        Int      // 1-5 arası puan
+  comment       String?
+  createdAt     DateTime @default(now())
+
+  swapRequest SwapRequest @relation(fields: [swapRequestId], references: [id], onDelete: Cascade)
+  reviewer    User        @relation("GivenReviews", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewee    User        @relation("ReceivedReviews", fields: [revieweeId], references: [id], onDelete: Cascade)
+
+  @@unique([swapRequestId, reviewerId])
+  @@map("reviews")
+}

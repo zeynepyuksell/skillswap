@@ -1,0 +1,57 @@
+@baseUrl = http://localhost:5001
+
+### 1. Health Check
+GET {{baseUrl}}/health
+
+### 2. Yetenekleri Listele (Tümü)
+GET {{baseUrl}}/api/v1/skills
+
+### 3. Kategoriye Göre Yetenek Filtrele (Tasarım)
+GET {{baseUrl}}/api/v1/skills?category=Tasarım
+
+### 4. Arama İle Yetenek Bul (React)
+GET {{baseUrl}}/api/v1/skills?search=React
+
+### 5. Kullanıcı Girişi (Login) - Zeynep
+# @name loginZeynep
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "zeynep@example.com",
+  "password": "password123"
+}
+
+### Token Değişkeni
+@authToken = {{loginZeynep.response.body.data.token}}
+
+### 6. Giriş Yapan Kullanıcının Profilini Getir (/me)
+GET {{baseUrl}}/api/v1/users/me
+Authorization: Bearer {{authToken}}
+
+### 7. Profil Bilgilerini Güncelle
+PATCH {{baseUrl}}/api/v1/users/me
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "bio": "Fullstack Developer. TypeScript & Node.js uzmanı. Yeni diller öğrenmeyi seviyorum."
+}
+
+### 8. Tüm Kullanıcıları ve Mentorları Listele
+GET {{baseUrl}}/api/v1/users?page=1&limit=10
+
+### 9. Sisteme Yeni Yetenek Ekle (Admin / Giriş Yapmış Kullanıcı)
+POST {{baseUrl}}/api/v1/skills
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "GraphQL API",
+  "category": "Yazılım & Teknoloji",
+  "description": "GraphQL şemaları, sorguları ve Apollo Server mimarisi"
+}
+
+### 10. Kullanıcının Kendi Takas Taleplerini Listele
+GET {{baseUrl}}/api/v1/swaps/my-swaps
+Authorization: Bearer {{authToken}}
